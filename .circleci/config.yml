@@ -1,0 +1,14 @@
+# https://circleci.com/docs/2.0/language-java/
+
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/openjdk:8-jdk
+      
+    environment:
+      JVM_OPTS: -Xmx3200m
+    
+    steps:
+      - checkout
+      - run: gradle check
