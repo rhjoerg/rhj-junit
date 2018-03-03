@@ -1,6 +1,7 @@
 # https://circleci.com/docs/2.0/language-java/
 
 version: 2
+
 jobs:
   build:
     docker:
@@ -11,4 +12,5 @@ jobs:
     
     steps:
       - checkout
-      - run: gradle check
+      - run: chmod +x gradlew
+      - run: ./gradlew -PossrhUsername=blah -PossrhPassword=blah check

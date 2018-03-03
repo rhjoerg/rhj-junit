@@ -1,2 +1,4 @@
 
 rootProject.name = 'rhj-junit'
+
+include 'rhj-junit-common'

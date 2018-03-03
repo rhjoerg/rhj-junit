@@ -24,11 +24,8 @@ dependencies {
 
 	compile group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.1.0'
 	
-	testCompile group: 'junit', name: 'junit', version: '4.12'
-
-	testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.1.0'
-	testCompile group: 'org.junit.platform', name: 'junit-platform-launcher', version: '1.1.0'
-	testCompile group: 'org.junit.platform', name: 'junit-platform-runner', version: '1.1.0'
+	testRuntimeOnly group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.1.0'
+	testRuntimeOnly group: 'org.junit.platform', name: 'junit-platform-launcher', version: '1.1.0'
 }
 
 build.dependsOn jacocoTestReport 
@@ -37,7 +34,12 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 group 'ch.rhj.junit'
-version '0.1.0'
+version '0.2.0-SNAPSHOT'
+
+test {
+
+	useJUnitPlatform()
+}
 
 task sourcesJar(type: Jar) {
 
@@ -74,12 +76,6 @@ uploadArchives {
 			repository(url: 'https://oss.sonatype.org/service/local/staging/deploy/maven2/') {
 				authentication(userName: ossrhUsername, password: ossrhPassword)
 			}
-			
-			/*
-			snapshotRepository(url: 'https://oss.sonatype.org/content/repositories/snapshots/') {
-				authentication(userName: ossrhUsername, password: ossrhPassword)
-			}
-			*/
 			
 			snapshotRepository(url: "file://$buildDir/repository")
 			
