@@ -7,7 +7,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
-import java.nio.charset.StandardCharsets;
+import java.nio.charset.Charset;
 
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.ParameterContext;
@@ -15,29 +15,16 @@ import org.junit.jupiter.api.extension.ParameterResolutionException;
 import org.junit.jupiter.api.extension.ParameterResolver;
 import org.junit.platform.commons.util.AnnotationUtils;
 
+import ch.rhj.junit.util.Parameters;
+
 public class ResourcesExtension implements ParameterResolver {
 
 	@Override
 	public boolean supportsParameter(ParameterContext parameterContext, ExtensionContext extensionContext)
 			throws ParameterResolutionException {
 		
-		Parameter parameter = parameterContext.getParameter();
-		
-		if (!AnnotationUtils.isAnnotated(parameter, Resource.class))
-			return false;
-		
-		Class<?> type = parameter.getType();
-		
-		if (ByteBuffer.class.equals(type))
-			return true;
-		
-		if (byte[].class.equals(type))
-			return true;
-		
-		if (String.class.equals(type))
-			return true;
-		
-		return false;
+		return Parameters.test(parameterContext, Resource.class,
+				ByteBuffer.class, byte[].class, String.class);
 	}
 
 	@Override
@@ -75,12 +62,13 @@ public class ResourcesExtension implements ParameterResolver {
 			if (byte[].class.equals(parameterType))
 				return bytes;
 			
-			return new String(bytes, StandardCharsets.UTF_8);
+			Resource annotation = AnnotationUtils.findAnnotation(parameter, Resource.class).get();
+			
+			return new String(bytes, Charset.forName(annotation.charset()));
 			
 		} catch (IOException e) {
 
 			throw new ParameterResolutionException(name + " not opened", e);
 		}
 	}
-
 }

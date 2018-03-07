@@ -1,11 +1,8 @@
-package ch.rhj.junit.tempdir;
+package ch.rhj.junit.testdir;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 
-import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.ParameterContext;
 import org.junit.jupiter.api.extension.ParameterResolutionException;
@@ -15,15 +12,15 @@ import ch.rhj.junit.util.AbstractExtension;
 import ch.rhj.junit.util.Parameters;
 import ch.rhj.junit.util.Paths;
 
-public class TemporaryDirectoryExtension extends AbstractExtension implements ParameterResolver, AfterEachCallback {
-
-	private static final String KEY = "temporaryDirectory";
+public class TestDirectoryExtension extends AbstractExtension implements ParameterResolver {
 	
+	private static final String KEY = "testDirectory";
+
 	@Override
 	public boolean supportsParameter(ParameterContext parameterContext, ExtensionContext extensionContext)
 			throws ParameterResolutionException {
 		
-		return Parameters.test(parameterContext, TemporaryDirectory.class, Path.class, File.class);
+		return Parameters.test(parameterContext, TestDirectory.class, Path.class, File.class);
 	}
 
 	@Override
@@ -42,15 +39,6 @@ public class TemporaryDirectoryExtension extends AbstractExtension implements Pa
 		throw new ParameterResolutionException("doesnt' happen");
 	}
 	
-	@Override
-	public void afterEach(ExtensionContext context) throws Exception {
-		
-		Path path = getObject(context, KEY, Path.class);
-		
-		if (path != null)
-			Paths.delete(path);
-	}
-	
 	protected Path getOrCreateDirectory(ExtensionContext context) {
 		
 		return getOrCreateObject(context, KEY, Path.class, this::createDirectory);
@@ -58,13 +46,13 @@ public class TemporaryDirectoryExtension extends AbstractExtension implements Pa
 	
 	private Path createDirectory(ExtensionContext context) {
 		
-		try {
-			
-			return Files.createTempDirectory("tmp-");
-			
-		} catch (IOException e) {
-			
-			throw new ParameterResolutionException("Could not create temporary directory", e);
-		}
+		String className = context.getRequiredTestClass().getSimpleName();
+		String testName = context.getRequiredTestMethod().getName();
+		
+		Path directory = Paths.of("build", "test", className, testName);
+		
+		Paths.mkdirs(directory);
+		
+		return directory;
 	}
 }

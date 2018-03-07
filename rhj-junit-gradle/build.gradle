@@ -1,0 +1,15 @@
+
+ext.title = 'RHJ JUnit Gradle Extensions'
+ext.description = 'Extensions to test Gradle projects'
+
+repositories {
+
+	maven { url 'https://repo.gradle.org/gradle/libs-releases-local/' }
+}
+
+dependencies {
+
+	compile project(':rhj-junit-common')
+	compile gradleApi()
+	compile gradleTestKit()
+}

@@ -1,4 +1,4 @@
-package ch.rhj.junit.resource;
+package ch.rhj.junit.gradle;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -9,9 +9,5 @@ import java.lang.annotation.Target;
 @Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface Resource {
-
-	String value();
-	
-	String charset() default "UTF-8";
+public @interface Gradle {
 }
