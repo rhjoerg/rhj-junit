@@ -1,4 +1,4 @@
-package ch.rhj.junit.util;
+package ch.rhj.junit.support;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Parameter;
@@ -6,16 +6,16 @@ import java.lang.reflect.Parameter;
 import org.junit.jupiter.api.extension.ParameterContext;
 import org.junit.platform.commons.util.AnnotationUtils;
 
-public class Parameters {
-	
-	public static boolean test(Parameter parameter, Class<? extends Annotation> annotationType, Class<?>... allowedTypes) {
+public class ParameterSupport {
+
+	public static boolean supports(Parameter parameter, Class<? extends Annotation> annotationType, Class<?>... allowedTypes) {
 		
 		if (!AnnotationUtils.isAnnotated(parameter, annotationType))
 			return false;
 		
 		Class<?> parameterType = parameter.getType();
 		
-		for (Class<?> allowedType : allowedTypes) {
+		for (Class<?> allowedType : allowedTypes ) {
 			
 			if (allowedType.equals(parameterType))
 				return true;
@@ -23,9 +23,9 @@ public class Parameters {
 		
 		return false;
 	}
-
-	public static boolean test(ParameterContext context, Class<? extends Annotation> annotationType, Class<?>... allowedTypes) {
+	
+	public static boolean supports(ParameterContext context, Class<? extends Annotation> annotationType, Class<?>... allowedTypes) {
 		
-		return test(context.getParameter(), annotationType, allowedTypes);
+		return supports(context.getParameter(), annotationType, allowedTypes);
 	}
 }

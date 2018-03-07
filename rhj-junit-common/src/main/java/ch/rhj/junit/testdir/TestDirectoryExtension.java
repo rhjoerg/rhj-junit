@@ -1,16 +1,19 @@
 package ch.rhj.junit.testdir;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.ParameterContext;
 import org.junit.jupiter.api.extension.ParameterResolutionException;
 import org.junit.jupiter.api.extension.ParameterResolver;
 
-import ch.rhj.junit.util.AbstractExtension;
-import ch.rhj.junit.util.Parameters;
-import ch.rhj.junit.util.Paths;
+import ch.rhj.junit.AbstractExtension;
+import ch.rhj.junit.support.DirectorySupport;
+import ch.rhj.junit.support.ParameterSupport;
 
 public class TestDirectoryExtension extends AbstractExtension implements ParameterResolver {
 	
@@ -20,7 +23,7 @@ public class TestDirectoryExtension extends AbstractExtension implements Paramet
 	public boolean supportsParameter(ParameterContext parameterContext, ExtensionContext extensionContext)
 			throws ParameterResolutionException {
 		
-		return Parameters.test(parameterContext, TestDirectory.class, Path.class, File.class);
+		return ParameterSupport.supports(parameterContext, TestDirectory.class, Path.class, File.class);
 	}
 
 	@Override
@@ -36,7 +39,7 @@ public class TestDirectoryExtension extends AbstractExtension implements Paramet
 		if (File.class.equals(parameterType))
 			return directory.toFile();
 		
-		throw new ParameterResolutionException("doesnt' happen");
+		throw new IllegalStateException();
 	}
 	
 	protected Path getOrCreateDirectory(ExtensionContext context) {
@@ -46,13 +49,15 @@ public class TestDirectoryExtension extends AbstractExtension implements Paramet
 	
 	private Path createDirectory(ExtensionContext context) {
 		
-		String className = context.getRequiredTestClass().getSimpleName();
-		String testName = context.getRequiredTestMethod().getName();
+		Path directory = DirectorySupport.of(Paths.get("build", "test"), context);
 		
-		Path directory = Paths.of("build", "test", className, testName);
-		
-		Paths.mkdirs(directory);
-		
-		return directory;
+		try {
+			
+			return Files.createDirectories(directory);
+			
+		} catch (IOException e) {
+
+			throw new ParameterResolutionException("cannot create directory '" + directory + "'", e);
+		}
 	}
 }

@@ -11,9 +11,9 @@ import org.junit.jupiter.api.extension.ParameterContext;
 import org.junit.jupiter.api.extension.ParameterResolutionException;
 import org.junit.jupiter.api.extension.ParameterResolver;
 
-import ch.rhj.junit.util.AbstractExtension;
-import ch.rhj.junit.util.Parameters;
-import ch.rhj.junit.util.Paths;
+import ch.rhj.junit.AbstractExtension;
+import ch.rhj.junit.support.DirectorySupport;
+import ch.rhj.junit.support.ParameterSupport;
 
 public class TemporaryDirectoryExtension extends AbstractExtension implements ParameterResolver, AfterEachCallback {
 
@@ -23,7 +23,7 @@ public class TemporaryDirectoryExtension extends AbstractExtension implements Pa
 	public boolean supportsParameter(ParameterContext parameterContext, ExtensionContext extensionContext)
 			throws ParameterResolutionException {
 		
-		return Parameters.test(parameterContext, TemporaryDirectory.class, Path.class, File.class);
+		return ParameterSupport.supports(parameterContext, TemporaryDirectory.class, Path.class, File.class);
 	}
 
 	@Override
@@ -39,7 +39,7 @@ public class TemporaryDirectoryExtension extends AbstractExtension implements Pa
 		if (File.class.equals(parameterType))
 			return directory.toFile();
 		
-		throw new ParameterResolutionException("doesnt' happen");
+		throw new IllegalStateException();
 	}
 	
 	@Override
@@ -48,7 +48,7 @@ public class TemporaryDirectoryExtension extends AbstractExtension implements Pa
 		Path path = getObject(context, KEY, Path.class);
 		
 		if (path != null)
-			Paths.delete(path);
+			DirectorySupport.delete(path);
 	}
 	
 	protected Path getOrCreateDirectory(ExtensionContext context) {

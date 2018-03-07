@@ -1,4 +1,6 @@
-package ch.rhj.junit.util;
+package ch.rhj.junit.support;
+
+import static java.nio.file.LinkOption.NOFOLLOW_LINKS;
 
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
@@ -7,56 +9,39 @@ import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 
-public class Paths {
+import org.junit.jupiter.api.extension.ExtensionContext;
+
+public class DirectorySupport {
 	
-	public static Path of(String first, String... more) {
+	public static Path of(Path start, ExtensionContext context) {
 		
-		return java.nio.file.Paths.get(first, more);
+		return start
+			.resolve(context.getRequiredTestClass().getSimpleName())
+			.resolve(context.getRequiredTestMethod().getName());
 	}
 
-	public static boolean exists(Path path) {
-		
-		return Files.exists(path);
-	}
-	
-	public static boolean isDirectory(Path path) {
-		
-		return Files.isDirectory(path);
-	}
-	
-	public static boolean isFile(Path path) {
-		
-		return Files.isRegularFile(path);
-	}
-	
-	public static boolean mkdirs(Path path) {
-		
-		return path.toFile().mkdirs();
-	}
-	
 	public static void delete(Path path) throws IOException {
 		
-		if (!exists(path))
+		if (Files.notExists(path, NOFOLLOW_LINKS))
 			return;
 		
-		if (isFile(path)) {
+		if (Files.isRegularFile(path, NOFOLLOW_LINKS)) {
 			
 			Files.delete(path);
 			return;
 		}
 		
-		Files.walkFileTree(path, new SimpleFileVisitor<Path>() {
-
-
-			@Override
-			public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-				
-				return deleteAndContinue(file);
-			}
+		Files.walkFileTree(path, new SimpleFileVisitor<Path> () {
 			
 			@Override
-			public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+			public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
 
+				return deleteAndContinue(file);
+			}
+
+			@Override
+			public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+				
 				return deleteAndContinue(dir);
 			}
 

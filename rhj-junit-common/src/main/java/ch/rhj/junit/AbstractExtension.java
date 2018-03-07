@@ -1,4 +1,4 @@
-package ch.rhj.junit.util;
+package ch.rhj.junit;
 
 import java.util.function.Function;
 
