@@ -13,5 +13,5 @@
 <listEntry value="clean"/>
 <listEntry value="check"/>
 </listAttribute>
-<stringAttribute key="working_dir" value="${workspace_loc:/rhj-junit-common}"/>
+<stringAttribute key="working_dir" value="${workspace_loc:/rhj-junit}"/>
 </launchConfiguration>
