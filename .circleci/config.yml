@@ -15,6 +15,6 @@ jobs:
       - run: chmod +x gradlew
       - run: ./gradlew -PossrhUsername=blah -PossrhPassword=blah check
 
-    post:
-      - mkdir -p $CIRCLE_TEST_REPORTS/junit/
-      - find . -type f -regex ".*/build/test-results/test/*.xml" -exec cp {} $CIRCLE_TEST_REPORTS/junit/ \;
+  post:
+    - mkdir -p $CIRCLE_TEST_REPORTS/junit/
+    - find . -type f -regex ".*/build/test-results/test/*.xml" -exec cp {} $CIRCLE_TEST_REPORTS/junit/ \;
