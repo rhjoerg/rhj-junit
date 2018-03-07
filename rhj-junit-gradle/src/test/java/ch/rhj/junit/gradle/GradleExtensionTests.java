@@ -20,7 +20,7 @@ public class GradleExtensionTests {
 		assertTrue(Files.isRegularFile(directory.resolve("settings.gradle")));
 		assertTrue(Files.isRegularFile(directory.resolve("build.gradle")));
 		
-		BuildResult result = runner.withArguments("help").forwardOutput().build();
+		BuildResult result = runner.withArguments("help").build();
 		
 		assertEquals(TaskOutcome.SUCCESS, result.task(":help").getOutcome());
 	}
