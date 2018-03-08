@@ -11,14 +11,21 @@ import org.gradle.testkit.runner.GradleRunner;
 import org.gradle.testkit.runner.TaskOutcome;
 import org.junit.jupiter.api.Test;
 
+import ch.rhj.junit.resource.Resource;
+import ch.rhj.junit.resource.WithResources;
+
 @WithGradle
+@WithResources
 public class GradleExtensionTests {
 
 	@Test
-	public void help(@Gradle GradleRunner runner, @Gradle Path directory) throws Exception {
+	public void help(@Gradle GradleRunner runner, @Gradle Path directory,
+			@Resource("build.gradle") String buildGradle) throws Exception {
 		
 		assertTrue(Files.isRegularFile(directory.resolve("settings.gradle")));
 		assertTrue(Files.isRegularFile(directory.resolve("build.gradle")));
+		
+		Files.readAllLines(directory.resolve("build.gradle"));
 		
 		BuildResult result = runner.withArguments("help").build();
 		

@@ -18,7 +18,7 @@ public class ResourcesSupport {
 		
 		Class<?> testClass = context.getRequiredTestClass();
 		Method testMethod = context.getRequiredTestMethod();
-		String longName = testClass.getSimpleName() + "_" + testMethod.getName();
+		String longName = testClass.getSimpleName() + "_" + testMethod.getName() + "/" + name;
 		URL resource = testClass.getResource(longName);
 		
 		return resource == null ? testClass.getResource(name) : resource;
