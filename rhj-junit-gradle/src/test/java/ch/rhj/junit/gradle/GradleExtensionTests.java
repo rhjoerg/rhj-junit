@@ -5,7 +5,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
+import org.gradle.api.Project;
 import org.gradle.testkit.runner.BuildResult;
 import org.gradle.testkit.runner.GradleRunner;
 import org.gradle.testkit.runner.TaskOutcome;
@@ -30,5 +32,13 @@ public class GradleExtensionTests {
 		BuildResult result = runner.withArguments("help").build();
 		
 		assertEquals(TaskOutcome.SUCCESS, result.task(":help").getOutcome());
+	}
+	
+	@Test
+	public void project(@Gradle Project project) {
+		
+		Path buildDir = project.getBuildDir().toPath();
+
+		assertTrue(buildDir.endsWith(Paths.get("GradleExtensionTests", "project", "build")));
 	}
 }

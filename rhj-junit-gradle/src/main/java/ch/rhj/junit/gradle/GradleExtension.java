@@ -7,6 +7,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import org.gradle.api.Project;
+import org.gradle.testfixtures.ProjectBuilder;
 import org.gradle.testkit.runner.GradleRunner;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -21,15 +23,16 @@ import ch.rhj.junit.support.ResourcesSupport;
 
 public class GradleExtension extends AbstractExtension implements ParameterResolver, BeforeEachCallback {
 	
-	private static final String GRADLE_RUNNER_KEY = "gradleRunner";
-	private static final String WORKING_DIRECTORY_KEY = "workingDirectory";
+	private static final String RUNNER_KEY = "runner";
+	private static final String PROJECT_KEY = "project";
+	private static final String DIRECTORY_KEY = "directory";
 
 	@Override
 	public boolean supportsParameter(ParameterContext parameterContext, ExtensionContext extensionContext)
 			throws ParameterResolutionException {
 		
 		return ParameterSupport.supports(parameterContext, Gradle.class,
-				GradleRunner.class, Path.class, File.class);
+				GradleRunner.class, Project.class, Path.class, File.class);
 	}
 
 	@Override
@@ -39,25 +42,28 @@ public class GradleExtension extends AbstractExtension implements ParameterResol
 		Class<?> parameterType = parameterContext.getParameter().getType();
 		
 		if (GradleRunner.class.equals(parameterType))
-			return getOrCreateGradleRunner(extensionContext);
+			return getOrCreateRunner(extensionContext);
+		
+		if (Project.class.equals(parameterType))
+			return getOrCreateProject(extensionContext);
 		
 		if (Path.class.equals(parameterType))
-			return getOrCreateWorkingDirectory(extensionContext);
+			return getOrCreateDirectory(extensionContext);
 		
 		if (File.class.equals(parameterType))
-			return getOrCreateWorkingDirectory(extensionContext).toFile();
+			return getOrCreateDirectory(extensionContext).toFile();
 		
 		throw new IllegalStateException();
 	}
 	
-	protected GradleRunner getOrCreateGradleRunner(ExtensionContext context) {
+	protected GradleRunner getOrCreateRunner(ExtensionContext context) {
 		
-		return getOrCreateObject(context, GRADLE_RUNNER_KEY, GradleRunner.class, this::createGradleRunner);
+		return getOrCreateObject(context, RUNNER_KEY, GradleRunner.class, this::createGradleRunner);
 	}
 	
 	protected GradleRunner createGradleRunner(ExtensionContext context) {
 		
-		Path directory = getOrCreateWorkingDirectory(context);
+		Path directory = getOrCreateDirectory(context);
 		
 		try {
 			
@@ -86,14 +92,30 @@ public class GradleExtension extends AbstractExtension implements ParameterResol
 		}
 	}
 	
-	protected Path getOrCreateWorkingDirectory(ExtensionContext context) {
+	protected Project getOrCreateProject(ExtensionContext context) {
 		
-		return getOrCreateObject(context, WORKING_DIRECTORY_KEY, Path.class, this::createWorkingDirectory);
+		return getOrCreateObject(context, PROJECT_KEY, Project.class, this::createProject);
 	}
 	
-	protected Path createWorkingDirectory(ExtensionContext context) {
+	protected Project createProject(ExtensionContext context) {
 		
-		Path directory = DirectorySupport.of(Paths.get("build", "test"), context);
+		String name = context.getRequiredTestClass().getSimpleName() + "_" + context.getRequiredTestMethod().getName();
+		File directory = getOrCreateDirectory(context).toFile();
+		
+		return ProjectBuilder.builder()
+			.withName(name)
+			.withProjectDir(directory)
+			.build();
+	}
+	
+	protected Path getOrCreateDirectory(ExtensionContext context) {
+		
+		return getOrCreateObject(context, DIRECTORY_KEY, Path.class, this::createDirectory);
+	}
+	
+	protected Path createDirectory(ExtensionContext context) {
+		
+		Path directory = DirectorySupport.of(Paths.get("build", "test"), context).toAbsolutePath();
 		
 		try {
 			
@@ -108,7 +130,7 @@ public class GradleExtension extends AbstractExtension implements ParameterResol
 	@Override
 	public void beforeEach(ExtensionContext context) throws Exception {
 
-		Path directory = getOrCreateWorkingDirectory(context);
+		Path directory = getOrCreateDirectory(context);
 		
 		DirectorySupport.delete(directory);
 		Files.createDirectories(directory);
