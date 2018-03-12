@@ -1,0 +1,10 @@
+
+
+ext.title = 'RHJ JUnit Mockito Extension'
+ext.description = 'Extension supporting instance and parameter level mocks.'
+
+dependencies {
+
+	compile project(':rhj-junit-common')
+	compile group: 'org.mockito', name: 'mockito-core', version: '2.15.0'
+}

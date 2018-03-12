@@ -3,3 +3,4 @@ rootProject.name = 'rhj-junit'
 
 include 'rhj-junit-common'
 include 'rhj-junit-gradle'
+include 'rhj-junit-mockito'

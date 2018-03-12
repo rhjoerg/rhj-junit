@@ -13,6 +13,9 @@ public class ParameterSupport {
 		if (!AnnotationUtils.isAnnotated(parameter, annotationType))
 			return false;
 		
+		if (allowedTypes.length == 0)
+			return true;
+		
 		Class<?> parameterType = parameter.getType();
 		
 		for (Class<?> allowedType : allowedTypes ) {
