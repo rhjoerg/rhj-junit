@@ -14,10 +14,7 @@ import org.gradle.testkit.runner.TaskOutcome;
 import org.junit.jupiter.api.Test;
 
 import ch.rhj.junit.resource.Resource;
-import ch.rhj.junit.resource.WithResources;
 
-@WithGradle
-@WithResources
 public class GradleExtensionTests {
 
 	@Test

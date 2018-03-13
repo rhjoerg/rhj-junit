@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
-@WithMockito
 public class MockitoExtensionTests {
 
 	public static interface Foo {}
