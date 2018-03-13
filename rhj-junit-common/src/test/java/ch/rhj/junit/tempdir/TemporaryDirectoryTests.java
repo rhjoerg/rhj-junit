@@ -7,7 +7,6 @@ import java.nio.file.Path;
 
 import org.junit.jupiter.api.Test;
 
-@WithTemporaryDirectory
 public class TemporaryDirectoryTests {
 
 	@Test

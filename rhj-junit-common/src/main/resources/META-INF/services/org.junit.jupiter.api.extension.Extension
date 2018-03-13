@@ -1,0 +1,3 @@
+ch.rhj.junit.resource.ResourcesExtension
+ch.rhj.junit.tempdir.TemporaryDirectoryExtension
+ch.rhj.junit.testdir.TestDirectoryExtension

@@ -8,7 +8,6 @@ import java.nio.file.Path;
 
 import org.junit.jupiter.api.Test;
 
-@WithTestDirectory
 public class TestDirectoryExtensionTests {
 
 	@Test

@@ -7,7 +7,6 @@ import java.nio.ByteBuffer;
 
 import org.junit.jupiter.api.Test;
 
-@WithResources
 public class ResourcesTest {
 	
 	private static final String RESOURCE = "ResourcesTest.txt";
